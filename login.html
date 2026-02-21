@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LuxeReserve | Authentication</title>
+    <style>
+        :root {
+            --gold: #d4af37;
+            --dark-bg: #050507;
+            --card-bg: rgba(20, 22, 28, 0.8);
+            --accent: #66fcf1;
+            --white: #ffffff;
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--dark-bg);
+            color: var(--white);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle at center, #111 0%, #000 100%);
+        }
+
+        .login-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(25px);
+            padding: 2.5rem;
+            border-radius: 20px;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.9);
+            transition: all 0.5s ease;
+        }
+
+        h2 { color: var(--gold); text-align: center; letter-spacing: 4px; text-transform: uppercase; margin-bottom: 2rem; }
+
+        .input-group { margin-bottom: 1.2rem; }
+        label { display: block; font-size: 0.7rem; color: var(--gold); margin-bottom: 5px; text-transform: uppercase; }
+
+        input {
+            width: 100%; box-sizing: border-box;
+            padding: 12px; background: rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;
+            color: white; transition: 0.3s;
+        }
+
+        input:focus { border-color: var(--accent); outline: none; }
+
+        /* Hidden fields for Toggle */
+        .signup-only { display: none; opacity: 0; transition: 0.4s; }
+
+        .auth-btn {
+            width: 100%; padding: 15px;
+            background: var(--gold); color: black;
+            border: none; border-radius: 8px; font-weight: bold;
+            text-transform: uppercase; cursor: pointer; margin-top: 10px;
+        }
+
+        /* Toggle Base Navigation */
+        .toggle-base {
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.85rem;
+            color: #888;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            padding-top: 1.5rem;
+        }
+
+        .toggle-link {
+            color: var(--gold);
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: underline;
+            margin-left: 5px;
+        }
+
+        .toggle-link:hover { color: var(--accent); }
+
+    </style>
+</head>
+<body>
+
+<div class="login-card" id="authCard">
+    <h2 id="formTitle">Sign In</h2>
+
+    <form onsubmit="handleAuth(event)">
+        <div class="input-group signup-only">
+            <label>Full Name</label>
+            <input type="text" id="regName" placeholder="Enter full name">
+        </div>
+        
+        <div class="input-group signup-only">
+            <label>Phone Number</label>
+            <input type="tel" id="regPhone" placeholder="+1 (555) 000-0000">
+        </div>
+
+        <div class="input-group">
+            <label>Email Address</label>
+            <input type="email" id="email" required placeholder="name@luxury.com">
+        </div>
+
+        <div class="input-group">
+            <label>Password</label>
+            <input type="password" id="password" required placeholder="••••••••">
+        </div>
+
+        <button type="submit" class="auth-btn" id="submitBtn">Enter Portal</button>
+    </form>
+
+    <div class="toggle-base" id="toggleText">
+        Don't have an account? <span class="toggle-link" onclick="toggleForm('signup')">Sign Up</span>
+    </div>
+</div>
+
+<script>
+    let currentMode = 'signin';
+
+    function toggleForm(mode) {
+        currentMode = mode;
+        const signupFields = document.querySelectorAll('.signup-only');
+        const title = document.getElementById('formTitle');
+        const btn = document.getElementById('submitBtn');
+        const toggleBase = document.getElementById('toggleText');
+
+        if (mode === 'signup') {
+            signupFields.forEach(el => { el.style.display = 'block'; setTimeout(() => el.style.opacity = '1', 10); });
+            title.innerText = "Create Account";
+            btn.innerText = "Register Client";
+            toggleBase.innerHTML = `Already a member? <span class="toggle-link" onclick="toggleForm('signin')">Sign In</span>`;
+        } else {
+            signupFields.forEach(el => { el.style.display = 'none'; el.style.opacity = '0'; });
+            title.innerText = "Sign In";
+            btn.innerText = "Enter Portal";
+            toggleBase.innerHTML = `Don't have an account? <span class="toggle-link" onclick="toggleForm('signup')">Sign Up</span>`;
+        }
+    }
+
+    function handleAuth(event) {
+        event.preventDefault();
+        
+        // Save data to sessionStorage for the booking page to use
+        const email = document.getElementById('email').value;
+        const name = document.getElementById('regName').value || "Valued Guest";
+        
+        sessionStorage.setItem("userEmail", email);
+        sessionStorage.setItem("userName", name);
+
+        // Transition effect
+        document.getElementById('authCard').style.transform = "scale(0.9)";
+        document.getElementById('authCard').style.opacity = "0";
+
+        setTimeout(() => {
+            window.location.href = "booking.html";
+        }, 600);
+    }
+</script>
+
+</body>
+</html>
